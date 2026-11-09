@@ -1,0 +1,20 @@
+{% extends "base.html" %}{% block body %}
+<div class="row g-3 mb-4">
+{% for label,val,col in [('Open',stats.open,'#dc3545'),('Investigating',stats.investigating,'#ffc107'),('Resolved',stats.resolved,'#198754'),('Critical (active)',stats.critical,'#6f42c1')] %}
+<div class="col-6 col-md-3"><div class="card stat shadow-sm" style="border-left-color:{{col}}"><div class="card-body">
+<div class="text-muted small">{{label}}</div><div class="fs-2 fw-bold">{{val}}</div></div></div></div>{% endfor %}</div>
+<form class="row g-2 mb-3">
+<div class="col-md-4"><input class="form-control" name="q" placeholder="Search title…" value="{{f.q or ''}}"></div>
+{% for name,opts in [('status',STATUSES),('severity',SEVERITIES),('category',CATEGORIES)] %}
+<div class="col-md-2"><select class="form-select" name="{{name}}"><option value="">All {{name}}</option>
+{% for o in opts %}<option {{'selected' if f.get(name)==o}}>{{o}}</option>{% endfor %}</select></div>{% endfor %}
+<div class="col-md-2"><button class="btn btn-outline-primary w-100">Filter</button></div></form>
+<div class="card shadow-sm"><table class="table table-hover mb-0 align-middle">
+<thead class="table-light"><tr><th>#</th><th>Title</th><th>Severity</th><th>Status</th><th>Assignee</th><th>Reported</th></tr></thead>
+{% for i in incidents %}<tr onclick="location='/incidents/{{i.id}}'" style="cursor:pointer">
+<td>{{i.id}}</td><td><b>{{i.title}}</b><div class="small text-muted">{{i.category}} · by {{i.reporter}}</div></td>
+<td><span class="badge sev-{{i.severity}}">{{i.severity}}</span></td>
+<td><span class="badge st-{{i.status}}">{{i.status}}</span></td>
+<td>{{i.assignee or '—'}}</td><td class="small">{{i.created_at}}</td></tr>
+{% else %}<tr><td colspan="6" class="text-center text-muted p-4">No incidents found.</td></tr>{% endfor %}
+</table></div>{% endblock %}

@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block body %}
+<h4 class="mb-3">User management</h4><div class="card shadow-sm"><table class="table mb-0 align-middle">
+<tr><th>User</th><th>Email</th><th>Role</th></tr>
+{% for u in users %}<tr><td>{{u.username}}</td><td>{{u.email}}</td><td>
+<form method="post" class="d-flex gap-2"><input type="hidden" name="user_id" value="{{u.id}}">
+<select class="form-select form-select-sm w-auto" name="role">{% for r in ROLES %}<option {{'selected' if r==u.role}}>{{r}}</option>{% endfor %}</select>
+<button class="btn btn-sm btn-outline-primary">Save</button></form></td></tr>{% endfor %}</table></div>{% endblock %}

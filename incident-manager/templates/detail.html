@@ -1,0 +1,29 @@
+{% extends "base.html" %}{% block body %}
+<div class="row g-4"><div class="col-lg-8">
+<div class="card shadow-sm mb-3"><div class="card-body">
+<div class="d-flex justify-content-between"><h4>#{{i.id}} {{i.title}}</h4>
+<div><span class="badge sev-{{i.severity}}">{{i.severity}}</span> <span class="badge st-{{i.status}}">{{i.status}}</span></div></div>
+<div class="text-muted small mb-3">{{i.category}} · reported by {{i.reporter}} on {{i.created_at}} · assignee: {{i.assignee or 'unassigned'}}</div>
+<p style="white-space:pre-wrap">{{i.description}}</p>
+{% if i.resolution %}<div class="alert alert-success mb-0"><b>Resolution ({{i.resolved_at}}):</b> {{i.resolution}}</div>{% endif %}</div></div>
+<h6>Timeline</h6>
+{% for t in timeline %}<div class="tl {{'ev' if t.is_event}}"><div class="small text-muted">{{t.username}} · {{t.created_at}}</div>
+{% if t.is_event %}<i class="bi bi-activity"></i> {% endif %}{{t.body}}</div>{% endfor %}
+<form method="post" action="/incidents/{{i.id}}/comment" class="d-flex gap-2">
+<input class="form-control" name="body" placeholder="Add a comment…"><button class="btn btn-outline-primary">Post</button></form>
+</div>
+{% if manage and i.status!='resolved' %}<div class="col-lg-4">
+<div class="card shadow-sm mb-3"><div class="card-body"><h6>Update</h6>
+<form method="post" action="/incidents/{{i.id}}/update">
+<select class="form-select mb-2" name="status">{% for s in STATUSES[:2] %}<option {{'selected' if s==i.status}}>{{s}}</option>{% endfor %}</select>
+<select class="form-select mb-2" name="severity">{% for s in SEVERITIES %}<option {{'selected' if s==i.severity}}>{{s}}</option>{% endfor %}</select>
+<button class="btn btn-sm btn-primary">Save</button></form></div></div>
+<div class="card shadow-sm mb-3"><div class="card-body"><h6>Assign</h6>
+<form method="post" action="/incidents/{{i.id}}/assign" class="d-flex gap-2">
+<select class="form-select" name="assignee_id">{% for s in staff %}<option value="{{s.id}}">{{s.username}}</option>{% endfor %}</select>
+<button class="btn btn-sm btn-primary">Assign</button></form></div></div>
+<div class="card shadow-sm border-success"><div class="card-body"><h6>Resolve</h6>
+<form method="post" action="/incidents/{{i.id}}/resolve">
+<textarea class="form-control mb-2" name="resolution" rows="3" placeholder="What fixed it?" required></textarea>
+<button class="btn btn-sm btn-success">Mark resolved</button></form></div></div></div>{% endif %}
+</div>{% endblock %}

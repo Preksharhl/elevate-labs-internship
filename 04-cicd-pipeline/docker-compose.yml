@@ -1,0 +1,6 @@
+services:
+  web:
+    build: .
+    image: ${DOCKERHUB_USERNAME:-local}/cicd-demo:latest
+    ports: ["8000:8000"]
+    restart: unless-stopped
